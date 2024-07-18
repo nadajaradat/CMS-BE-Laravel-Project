@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('user_name')->unique();
-            $table->string('contact_information')->unique();
+            $table->string('contact_information');
             $table->boolean('is_active')->default(true);
-            $table->string('password')->default('123123');
+            $table->boolean('is_admin')->default(false);
+            $table->string('password')->default('321321');
             $table->rememberToken();
             $table->timestamps();
         });

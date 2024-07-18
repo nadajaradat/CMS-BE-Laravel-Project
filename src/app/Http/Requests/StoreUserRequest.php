@@ -25,7 +25,7 @@ class StoreUserRequest extends CustomFormRequest
             'name' => 'required|string|max:255',
             'user_name' => 'required|string|max:255|unique:users',
             'contact_information' => 'required|string|max:255',
-            'password' => 'required|string|min:8',
+            'password' => 'string|min:8',
         ];
     }
 

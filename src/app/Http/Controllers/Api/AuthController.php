@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Auth\Events\Registered;
+use stdClass;
 
 class AuthController extends Controller
 {
@@ -26,17 +27,17 @@ class AuthController extends Controller
         }
 
         $user = User::where('user_name', $request['user_name'])->firstOrFail();
-        $user_loggedin = [
-            'id' => $user->id,
-            'user_name' => $user->user_name,
-            'status' => 'loggedin',
-        ];
+        $user_loggedin = new stdClass();
+        $user_loggedin->id = $user->id;
+        $user_loggedin->user_name = $user->user_name;
+        $user_loggedin->status = 'loggedin';
 
+        if ($user->is_active) {
             $token = $user->createToken('auth_token')->plainTextToken;
-            $user_loggedin['token'] = $token;
-            $user_loggedin['token_type'] = 'Bearer';
+            $user_loggedin->token = $token;
+            $user_loggedin->token_type = 'Bearer';
+        }
 
-
-        return response()->json([$user_loggedin], 200);
+        return response()->json($user_loggedin, 200);
     }
 }
