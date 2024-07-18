@@ -58,5 +58,13 @@ class User extends Authenticatable
         return $this->hasMany(Education::class, 'user_id');
     }
 
-
+    /**
+     * Get the user's educations.
+     *
+     * @return object
+     */
+    public function skills()
+    {
+        return $this->hasMany(Skill::class, 'user_id');
+    }
 }
