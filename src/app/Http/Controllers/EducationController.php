@@ -13,7 +13,10 @@ class EducationController extends Controller
     // Display a listing of the education records for a specific user.
     public function index(User $user)
     {
-        return response()->json($user->educations);
+        return response()->json([
+            'message' => 'Educations Retrieved Successfully',
+            'educations' => $user->educations
+        ], 200);
     }
 
     // Store a newly created education record in storage.
@@ -22,13 +25,19 @@ class EducationController extends Controller
         $education = new Education($request->validated());
         $user->educations()->save($education);
 
-        return response()->json(['message' => 'Education Assigned Succesfully', $education], 201);
+        return response()->json([
+            'message' => 'Education Assigned Succesfully',
+            'education' => $education
+        ], 201);
     }
 
     // Display the specified education record.
     public function show(Education $education)
     {
-        return response()->json($education);
+        return response()->json([
+            'message' => 'Education Retrieved Successfully',
+            'education' => $education
+        ], 200);
     }
 
     // Update the specified education record in storage.
@@ -36,7 +45,10 @@ class EducationController extends Controller
     {
         $education->update($request->validated());
 
-        return response()->json(['message' => 'Education Assigned Succesfully', $education]);
+        return response()->json([
+            'message' => 'Education Assigned Succesfully',
+            'education' => $education
+        ]);
     }
 
     // Remove the specified education record from storage.

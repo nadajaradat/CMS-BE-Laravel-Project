@@ -15,7 +15,10 @@ class SkillController extends Controller
      */
     public function index(User $user)
     {
-        return response()->json($user->skills);
+        return response()->json([
+            'message' => 'skills Retrieved Successfully',
+            'skills' => $user->skills
+        ]);
     }
 
 
@@ -27,7 +30,10 @@ class SkillController extends Controller
 
         $skill = $user->skills()->create($request->validated());
 
-        return response()->json(['message' => 'Skill Assigned Succefully', $skill], 201);
+        return response()->json([
+            'message' => 'Skill Assigned Succefully',
+            'skill' => $skill
+        ], 201);
     }
 
     /**
@@ -35,7 +41,10 @@ class SkillController extends Controller
      */
     public function show(Skill $skill)
     {
-        return response()->json($skill);
+        return response()->json([
+            'message' => 'Skill Retrieved Successfully',
+            'skill' => $skill
+        ]);
     }
 
 
@@ -47,7 +56,10 @@ class SkillController extends Controller
 
         $skill->update($request->validated());
 
-        return response()->json(['message' => 'Skill Updated Succefully', $skill]);
+        return response()->json([
+            'message' => 'Skill Updated Succefully',
+            $skill
+        ]);
     }
     /**
      * Remove the specified resource from storage.
