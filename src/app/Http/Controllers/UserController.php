@@ -15,7 +15,11 @@ class UserController extends Controller
      */
     public function index()
     {
-        return user::all();
+        $users = user::where('is_active', '=', true)->get();
+        return response()->json([
+            'message' => 'Users Retrieved Successfully',
+            'users' => $users
+        ], 200);
     }
 
 
@@ -42,7 +46,11 @@ class UserController extends Controller
      */
     public function show(user $user)
     {
-        return $user;
+
+        return response()->json([
+            'message' => 'User Retrieved Successfully',
+            'user' => $user
+        ], 200);
     }
 
 

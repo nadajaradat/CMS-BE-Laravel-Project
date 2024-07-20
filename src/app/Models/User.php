@@ -47,4 +47,24 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get the user's educations.
+     *
+     * @return object
+     */
+    public function educations()
+    {
+        return $this->hasMany(Education::class, 'user_id');
+    }
+
+    /**
+     * Get the user's educations.
+     *
+     * @return object
+     */
+    public function skills()
+    {
+        return $this->hasMany(Skill::class, 'user_id');
+    }
 }
