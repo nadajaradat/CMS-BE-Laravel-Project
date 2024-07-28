@@ -14,14 +14,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            RolesAndPermissionsSeeder::class,
+            AdminSeeder::class,
+        ]);
 
-        User::factory()->create([
-            'name' => 'Root',
-            'user_name' => 'root',
-            'contact_information' => 'root@clinic.com',
-            'password' => Hash::make('321321'),
-            'is_admin' => true,
+        // Create a guest user
+        User::create([
+            'name' => 'Guest',
+            'user_name' => 'guest',
+            'contact_information' => '0598563254',
+            'password' => Hash::make('guest123'),
         ]);
     }
 }
