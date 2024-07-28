@@ -22,14 +22,17 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Create permissions
         $permissions = [
-            'manage users'
+            'manage user',
+            'add user',
+            'edit user',
+            'delete user',
+            'view user',
         ];
 
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission]);
         }
-
         // Assign permissions to roles
-        $adminRole->givePermissionTo('manage users');
+        $adminRole->givePermissionTo('manage user');
     }
 }

@@ -15,7 +15,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = user::where('is_active', '=', true)->get();
+        $this->authorize('viewAny', User::class);
+        $users = User::where('is_active', '=', true)
+            ->with('roles.permissions')
+            ->get();
         return response()->json([
             'message' => 'Users Retrieved Successfully',
             'users' => $users
@@ -28,6 +31,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
+        $this->authorize('create', User::class);
         $user = user::create($request->validated());
 
         event(new Registered($user));
@@ -46,6 +50,8 @@ class UserController extends Controller
      */
     public function show(user $user)
     {
+        $this->authorize('view', $user);
+        $user->load('roles.permissions');
 
         return response()->json([
             'message' => 'User Retrieved Successfully',
@@ -59,6 +65,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, user $user)
     {
+        $this->authorize('update', $user);
         $user->update($request->validated());
 
         return response()->json([
@@ -73,6 +80,7 @@ class UserController extends Controller
      */
     public function destroy(user $user)
     {
+        $this->authorize('delete', $user);
         $user->is_active = false;
         $user->save();
 

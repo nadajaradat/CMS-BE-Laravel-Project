@@ -6,6 +6,7 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,11 +21,15 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create a guest user
-        User::create([
-            'name' => 'Guest',
-            'user_name' => 'guest',
+        $doctor = User::create([
+            'name' => 'testDoctor',
+            'user_name' => 'test_doctor',
             'contact_information' => '0598563254',
-            'password' => Hash::make('guest123'),
+            'password' => Hash::make('doctor123'),
         ]);
+        $doctorRole = Role::where('name', 'doctor')->first();
+        if ($doctorRole) {
+            $doctor->assignRole($doctorRole);
+        }
     }
 }
