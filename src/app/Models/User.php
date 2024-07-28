@@ -67,4 +67,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(Skill::class, 'user_id');
     }
+
+    /**
+     * Get the user's educations.
+     *
+     * @return object
+     */
+    public function websites()
+    {
+        return $this->hasMany(Website::class, 'user_id');
+    }
+
+    /**
+     * Get the user's educations.
+     *
+     * @return object
+     */
+    public function experiences()
+    {
+        return $this->hasMany(Experience::class, 'user_id');
+    }
 }
