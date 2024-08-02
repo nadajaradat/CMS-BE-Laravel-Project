@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'testDoctor',
             'user_name' => 'test_doctor',
             'contact_information' => '0598563254',
-            'password' => Hash::make('doctor123'),
+            'password' => Hash::make('321321'),
         ]);
         $doctorRole = Role::where('name', 'doctor')->first();
         if ($doctorRole) {

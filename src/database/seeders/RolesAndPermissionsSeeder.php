@@ -22,17 +22,21 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Create permissions
         $permissions = [
-            'manage user',
-            'add user',
-            'edit user',
-            'delete user',
-            'view user',
+            // User permissions
+            'user-list',
+            'user-create',
+            'user-edit',
+            'user-delete'
+            // Profile permissions
         ];
 
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission]);
         }
         // Assign permissions to roles
-        $adminRole->givePermissionTo('manage user');
+        $adminRole->givePermissionTo('user-list', 'user-create', 'user-edit', 'user-delete');
+
+        // test doctor permissions
+        $doctorRole->givePermissionTo('user-list', 'user-edit');
     }
 }

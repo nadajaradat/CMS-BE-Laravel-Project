@@ -20,7 +20,7 @@ class AdminSeeder extends Seeder
             'name' => 'Admin',
             'user_name' => 'admin',
             'contact_information' => 'admin@clinic.com',
-            'password' => Hash::make('admin123'),
+            'password' => Hash::make('321321'),
             'is_admin' => true,
         ]);
 
