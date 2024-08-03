@@ -3,92 +3,97 @@
 namespace App\Policies;
 
 use App\Models\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
 class UserPolicy
 {
+    use HandlesAuthorization;
 
     /**
      * Determine whether the user can view any models.
+     *
+     * @param User $user
+     * @return Response
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User $user): Response
     {
-        return $user->hasRole('admin');
+        return $this->authorize($user, null, 'view');
     }
 
     /**
      * Determine whether the user can view the model.
+     *
+     * @param User $user
+     * @param User $model
+     * @return Response
      */
-    public function view(User $user, User $model): bool
+    public function view(User $user, User $model): Response
     {
-        if ($user->hasRole('admin')) {
-            return true;
-        }
-
-        if ($user->id === $model->id) {
-            return true;
-        }
-
-        // Other roles cannot view users
-        return false;
+        return $this->authorize($user, $model, 'view');
     }
 
     /**
      * Determine whether the user can create models.
+     *
+     * @param User $user
+     * @return Response
      */
-    public function create(User $user): bool
+    public function create(User $user): Response
     {
-        return $user->hasRole('admin');
+        return $this->authorize($user, null, 'create');
     }
 
     /**
      * Determine whether the user can update the model.
+     *
+     * @param User $user
+     * @param User $model
+     * @return Response
      */
-    public function update(User $user, User $model): bool
+    public function update(User $user, User $model): Response
     {
-        if ($user->hasRole('admin')) {
-            return true;
-        }
-
-        if ($user->id === $model->id) {
-            return true;
-        }
-
-        // Other roles cannot update users
-        return false;
+        return $this->authorize($user, $model, 'update');
     }
 
     /**
      * Determine whether the user can delete the model.
+     *
+     * @param User $user
+     * @param User $model
+     * @return Response
      */
-    public function delete(User $user, User $model): bool
+    public function delete(User $user, User $model): Response
     {
-        if ($user->hasRole('admin')) {
-            return true;
-        }
-
-        if ($user->id === $model->id) {
-            return true;
-        }
-
-        // Other roles cannot delete users
-        return false;
+        return $this->authorize($user, $model, 'delete');
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Private method to authorize admin or self.
+     *
+     * @param User $user
+     * @param User|null $model
+     * @param string $action
+     * @return Response
      */
-    public function forceDelete(User $user, User $model): bool
+    private function authorize(User $user, ?User $model, string $action): Response
     {
-        if ($user->hasRole('admin')) {
-            return true;
+        $isAuthorized = false;
+
+        if ($user->hasPermissionTo("{$action}-user")) {
+            $isAuthorized = true;
         }
 
-        if ($user->id === $model->id) {
-            return true;
+        if ($model && $user->id === $model->id) {
+            $isAuthorized = true;
+        } elseif ($user->hasPermissionTo('manage-user')) {
+            $isAuthorized = true;
+        } else {
+            $isAuthorized = false;
         }
 
-        // Other roles cannot delete users
-        return false;
+        return $isAuthorized
+            ? Response::allow()
+            : Response::deny("You do not have permission to {$action} this user.");
     }
 }

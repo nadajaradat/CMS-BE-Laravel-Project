@@ -11,10 +11,10 @@ class UserController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:user-list', ['only' => ['index', 'show']]);
-        $this->middleware('permission:user-create', ['only' => ['store']]);
-        $this->middleware('permission:user-edit', ['only' => ['update']]);
-        $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:view-user', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create-user', ['only' => ['store']]);
+        $this->middleware('permission:update-user', ['only' => ['update']]);
+        $this->middleware('permission:delete-user', ['only' => ['destroy']]);
     }
 
     /**
@@ -22,6 +22,7 @@ class UserController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', User::class);
         $users = User::where('is_active', '=', true)
             ->with('roles.permissions')
             ->get();
@@ -36,6 +37,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
+        $this->authorize('create', User::class);
         $user = User::create($request->validated());
 
         event(new Registered($user));
