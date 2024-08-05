@@ -53,12 +53,17 @@ class User extends Authenticatable
         ];
     }
 
-    public function permissions()
+    public function isCreated(): bool
+    {
+        return $this->exists;
+    }
+
+    public function Permissions()
     {
         return $this->morphToMany(Permission::class, 'model', 'model_has_permissions', 'model_id', 'permission_id');
     }
 
-    public function roles()
+    public function Roles()
     {
         return $this->morphToMany(Role::class, 'model', 'model_has_roles', 'model_id', 'role_id');
     }
@@ -69,7 +74,7 @@ class User extends Authenticatable
      *
      * @return object
      */
-    public function educations()
+    public function Educations()
     {
         return $this->hasMany(Education::class, 'user_id');
     }
@@ -79,7 +84,7 @@ class User extends Authenticatable
      *
      * @return object
      */
-    public function skills()
+    public function Skills()
     {
         return $this->hasMany(Skill::class, 'user_id');
     }
@@ -89,7 +94,7 @@ class User extends Authenticatable
      *
      * @return object
      */
-    public function websites()
+    public function Websites()
     {
         return $this->hasMany(Website::class, 'user_id');
     }
@@ -99,7 +104,7 @@ class User extends Authenticatable
      *
      * @return object
      */
-    public function experiences()
+    public function Experiences()
     {
         return $this->hasMany(Experience::class, 'user_id');
     }
