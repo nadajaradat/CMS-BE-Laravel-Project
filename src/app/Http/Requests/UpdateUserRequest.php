@@ -26,6 +26,7 @@ class UpdateUserRequest extends CustomFormRequest
             'user_name' => 'string|max:255|unique:users',
             'contact_information' => 'string|max:255',
             'password' => 'string|min:8',
+            'is_active' => 'boolean'
         ];
     }
 

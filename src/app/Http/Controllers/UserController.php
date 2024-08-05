@@ -10,26 +10,23 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends CustomController
 {
-    function __construct()
-    {
-        $this->middleware('permission:view-user', ['only' => ['index', 'show']]);
-        $this->middleware('permission:create-user', ['only' => ['store']]);
-        $this->middleware('permission:update-user', ['only' => ['update']]);
-        $this->middleware('permission:delete-user', ['only' => ['destroy']]);
-    }
-
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request, UserRepository $user)
     {
-        $this->authorize('viewAny', User::class);
+        try {
+            $this->authorize('viewAny', User::class);
+        } catch (AuthorizationException $e) {
+            return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
+        }
         $cntTotal = 0;
         $length = ($request->has('length')) ? $request->input('length') : 10;
         $start  = ($request->has('start')) ? (($request->input('start') / $length) + 1) : 0;
@@ -48,7 +45,11 @@ class UserController extends CustomController
      */
     public function store(StoreUserRequest $request, UserRepository $user)
     {
-        $this->authorize('create', User::class);
+        try {
+            $this->authorize('create', User::class);
+        } catch (AuthorizationException $e) {
+            return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
+        }
 
         DB::beginTransaction();
         try {
@@ -78,7 +79,12 @@ class UserController extends CustomController
      */
     public function show(User $user, UserRepository $userRepo)
     {
-        $this->authorize('view', $user);
+        try {
+            $this->authorize('view', $user);
+        } catch (AuthorizationException $e) {
+            return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
+        }
+
         try {
             $user = $userRepo->getUserById($user);
 
@@ -101,32 +107,31 @@ class UserController extends CustomController
      */
     public function update(UpdateUserRequest $request, User $user, UserRepository $userRepo)
     {
-        $this->authorize('update', $user);
-        
+        try {
+            $this->authorize('update', $user);
+        } catch (AuthorizationException $e) {
+            return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
+        }
+
         DB::beginTransaction();
-        try
-        {
+        try {
             $data   = $request->validated();
             $obj    = $userRepo->updateUser($user, $data);
-            if(!$obj)
-            {
+            if (!$obj) {
                 DB::rollBack();
-                return ApiActions::generateResponse(message_key:"An error occurred",code:ResponseCode::INTERNAL_ERROR);
+                return ApiActions::generateResponse(message_key: "An error occurred", code: ResponseCode::INTERNAL_ERROR);
             }
             $updated = $obj->isCreated();
-            if(!$updated)
-            {
+            if (!$updated) {
                 DB::rollBack();
-                return ApiActions::generateResponse(message_key:"An error when edit folder",code:ResponseCode::INTERNAL_ERROR);
+                return ApiActions::generateResponse(message_key: "An error when edit folder", code: ResponseCode::INTERNAL_ERROR);
             }
             DB::commit();
             $this->data["user"] = $userRepo->getUserById($user);
-            return ApiActions::generateResponse(UserResource::make($this->data), message_key:"Updated successfully");
-        }
-        catch (\Exception $e)
-        {
+            return ApiActions::generateResponse(UserResource::make($this->data), message_key: "Updated successfully");
+        } catch (\Exception $e) {
             DB::rollBack();
-            return ApiActions::generateResponse(['e' => $e->getMessage()],message_key:"An error occurred",code:ResponseCode::INTERNAL_ERROR);
+            return ApiActions::generateResponse(['e' => $e->getMessage()], message_key: "An error occurred", code: ResponseCode::INTERNAL_ERROR);
         }
     }
 
@@ -135,7 +140,12 @@ class UserController extends CustomController
      */
     public function destroy(User $user, UserRepository $userRepo)
     {
-        $this->authorize('delete', $user);
+        try {
+            $this->authorize('delete', $user);
+        } catch (AuthorizationException $e) {
+            return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
+        }
+
         DB::beginTransaction();
         try {
             $obj = $userRepo->deleteUser($user);
