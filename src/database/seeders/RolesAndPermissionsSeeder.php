@@ -24,7 +24,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $actions = ['view', 'create', 'update', 'delete', 'manage'];
 
         // Define entities
-        $entities = ['user'];
+        $entities = ['user', 'department'];
 
         // Generate permissions
         $permissions = [];
@@ -40,7 +40,6 @@ class RolesAndPermissionsSeeder extends Seeder
         // Assign permissions to roles
         $adminRole->givePermissionTo($permissions);
 
-        // test doctor permissions
-        $doctorRole->givePermissionTo('view-user');
+
     }
 }

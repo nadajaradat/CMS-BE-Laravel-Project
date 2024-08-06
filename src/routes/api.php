@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EducationController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\SkillController;
@@ -29,7 +30,16 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/user', 'store');
             Route::get('/user/{user}', 'show');
             Route::put('/user/{user}', 'update');
-            Route::delete('/user/{user}', 'destroy');
+            Route::delete('/user/{user}', 'destroy');           
+        });
+
+        // department management routes
+        Route::controller(DepartmentController::class)->group(function () {
+            Route::get('/department', 'index');
+            Route::post('/department', 'store');
+            Route::get('/department/{department}', 'show');
+            Route::put('/department/{department}', 'update');
+            Route::delete('/department/{department}', 'destroy');
         });
     });
 });

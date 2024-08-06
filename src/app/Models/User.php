@@ -108,4 +108,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Experience::class, 'user_id');
     }
+
+    /**
+     * Get the user Doctor.
+     *
+     * @return object
+     */
+    public function Doctor()
+    {
+        return $this->hasOne(Doctor::class, 'user_id');
+    }
+
 }
