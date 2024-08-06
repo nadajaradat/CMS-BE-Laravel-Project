@@ -169,12 +169,6 @@ class UserController extends CustomController
     public function indexProfile(User $user, UserRepository $userRepo)
     {
         try {
-            $this->authorize('view', $user);
-        } catch (AuthorizationException $e) {
-            return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
-        }
-
-        try {
             $user = $userRepo->getUserProfile($user);
 
             if (!$user) {

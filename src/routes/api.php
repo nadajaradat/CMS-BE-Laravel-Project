@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
 
+// profile management routes
+Route::controller(UserController::class)->group(function () {
+    Route::get('/user/{user}/profile', 'indexProfile');
+    Route::put('/user/{user}/profile', 'updateProfile')->middleware('auth:sanctum');
+});
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -27,12 +32,4 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/user/{user}', 'destroy');
         });
     });
-
-    // profile management routes
-    Route::controller(UserController::class)->group(function () {
-        Route::get('/user/{user}/profile', 'indexProfile');
-        Route::put('/user/{user}/profile', 'updateProfile');
-    });
-
-
 });
