@@ -14,7 +14,7 @@ class CustomFormRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->check() && auth()->user()->is_active;
     }
 
     public function failedValidation(Validator $validator)

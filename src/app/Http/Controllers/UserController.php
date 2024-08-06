@@ -4,31 +4,41 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Models\user;
+use App\Models\User;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:view-user', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create-user', ['only' => ['store']]);
+        $this->middleware('permission:update-user', ['only' => ['update']]);
+        $this->middleware('permission:delete-user', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $users = user::where('is_active', '=', true)->get();
+        $this->authorize('viewAny', User::class);
+        $users = User::where('is_active', '=', true)
+            ->with('roles.permissions')
+            ->get();
         return response()->json([
             'message' => 'Users Retrieved Successfully',
             'users' => $users
         ], 200);
     }
 
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreUserRequest $request)
     {
-        $user = user::create($request->validated());
+        $this->authorize('create', User::class);
+        $user = User::create($request->validated());
 
         event(new Registered($user));
         $created_user = User::where('user_name', '=', $request->user_name)->first();
@@ -44,8 +54,10 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(user $user)
+    public function show(User $user)
     {
+        $this->authorize('view', $user);
+        $user->load('roles.permissions');
 
         return response()->json([
             'message' => 'User Retrieved Successfully',
@@ -53,12 +65,12 @@ class UserController extends Controller
         ], 200);
     }
 
-
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, user $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
+        $this->authorize('update', $user);
         $user->update($request->validated());
 
         return response()->json([
@@ -71,8 +83,9 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(user $user)
+    public function destroy(User $user)
     {
+        $this->authorize('delete', $user);
         $user->is_active = false;
         $user->save();
 
