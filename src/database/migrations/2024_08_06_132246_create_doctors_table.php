@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('department_id')->constrained('departments')->onDelete('cascade')->default(1);
-            $table->string('description');
-            $table->integer('income_percentage');
+            $table->string('description')->nullable();
+            $table->integer('income_percentage')->default(0);
             $table->timestamps();
         });
     }

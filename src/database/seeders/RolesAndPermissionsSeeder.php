@@ -24,7 +24,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $actions = ['view', 'create', 'update', 'delete', 'manage'];
 
         // Define entities
-        $entities = ['user', 'department'];
+        $entities = ['user', 'department', 'doctor'];
 
         // Generate permissions
         $permissions = [];

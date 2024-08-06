@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Contract\UserRepositoryInterface;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 /**
  * Class UserRepository
@@ -111,6 +112,17 @@ class UserRepository implements UserRepositoryInterface
     
         $user->load(["Roles.Permissions", "Educations", "Experiences", "Skills", "Websites"]);
     
+        return $user;
+    }
+
+    public function assignRole(User $user, string $role_name)
+    {
+        $role = Role::where('name', $role_name)->first();
+        if ($role) {
+            $user->assignRole($role);
+        }
+        $user->load(["Roles.Permissions"]);
+
         return $user;
     }
 }

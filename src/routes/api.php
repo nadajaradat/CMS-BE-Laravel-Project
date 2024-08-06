@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\EducationController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\SkillController;
@@ -40,6 +41,14 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/department/{department}', 'show');
             Route::put('/department/{department}', 'update');
             Route::delete('/department/{department}', 'destroy');
+        });
+
+        // doctor management routes
+        Route::controller(DoctorController::class)->group(function () {
+            Route::get('/doctor', 'index');
+            Route::post('/doctor', 'store');
+            Route::get('/doctor/{doctor}', 'show');
+            Route::put('/doctor/{doctor}', 'update');
         });
     });
 });
