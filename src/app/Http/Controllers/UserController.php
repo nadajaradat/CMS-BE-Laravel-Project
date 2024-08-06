@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Actions\ApiActions;
 use App\Constants\ResponseCode;
 use App\Http\Controllers\CustomController;
-use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserProfileRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -156,6 +157,67 @@ class UserController extends CustomController
 
             DB::commit();
             return ApiActions::generateResponse(message_key: "Deleted successfully");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiActions::generateResponse(['e' => $e->getMessage()], message_key: "An error occurred", code: ResponseCode::INTERNAL_ERROR);
+        }
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function indexProfile(User $user, UserRepository $userRepo)
+    {
+        try {
+            $this->authorize('view', $user);
+        } catch (AuthorizationException $e) {
+            return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
+        }
+
+        try {
+            $user = $userRepo->getUserProfile($user);
+
+            if (!$user) {
+                DB::rollBack();
+                return ApiActions::generateResponse(message_key: "User not found", code: ResponseCode::NOT_FOUND);
+            }
+
+            DB::commit();
+            $this->data['user'] = $user;
+            return ApiActions::generateResponse(UserResource::make($this->data), message_key: "User Retrieved Successfully");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiActions::generateResponse(['e' => $e->getMessage()], message_key: "An error occurred", code: ResponseCode::INTERNAL_ERROR);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function updateProfile(UpdateUserProfileRequest $request, User $user, UserRepository $userRepo)
+    {
+        try {
+            $this->authorize('update', $user);
+        } catch (AuthorizationException $e) {
+            return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
+        }
+
+        DB::beginTransaction();
+        try {
+            $data   = $request->validated();
+            $obj    = $userRepo->updateUserProfile($user, $data);
+            if (!$obj) {
+                DB::rollBack();
+                return ApiActions::generateResponse(message_key: "An error occurred", code: ResponseCode::INTERNAL_ERROR);
+            }
+            $updated = $obj->isCreated();
+            if (!$updated) {
+                DB::rollBack();
+                return ApiActions::generateResponse(message_key: "An error when edit folder", code: ResponseCode::INTERNAL_ERROR);
+            }
+            DB::commit();
+            $this->data["user"] = $userRepo->getUserProfile($user);
+            return ApiActions::generateResponse(UserResource::make($this->data), message_key: "Updated successfully");
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiActions::generateResponse(['e' => $e->getMessage()], message_key: "An error occurred", code: ResponseCode::INTERNAL_ERROR);

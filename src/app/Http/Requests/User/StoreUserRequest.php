@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\User;
 
+use App\Http\Requests\CustomFormRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUserRequest extends CustomFormRequest

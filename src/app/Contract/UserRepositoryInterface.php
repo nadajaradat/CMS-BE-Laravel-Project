@@ -11,4 +11,6 @@ interface UserRepositoryInterface
     public function deleteUser(User $user);
     public function createUser(array $attributes);
     public function updateUser(User $user, array $attributes);
+    public function getUserProfile(User $user);
+    public function updateUserProfile(User $user, array $attributes);
 }

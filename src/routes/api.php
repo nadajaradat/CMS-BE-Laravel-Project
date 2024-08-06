@@ -18,7 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // user management routes
-    Route::middleware(['role:admin,doctor'])->group(function () {
+    Route::middleware(['role:admin'])->group(function () {
         Route::controller(UserController::class)->group(function () {
             Route::get('/user', 'index');
             Route::post('/user', 'store');
@@ -27,4 +27,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/user/{user}', 'destroy');
         });
     });
+
+    // profile management routes
+    Route::controller(UserController::class)->group(function () {
+        Route::get('/user/{user}/profile', 'indexProfile');
+        Route::put('/user/{user}/profile', 'updateProfile');
+    });
+
+
 });

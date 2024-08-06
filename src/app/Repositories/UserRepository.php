@@ -39,6 +39,12 @@ class UserRepository implements UserRepositoryInterface
         return $user;
     }
 
+    public function getUserProfile(User $user)
+    {
+        $user->load(["Roles.Permissions", "Educations", "Experiences", "Skills", "Websites"]);
+        return $user;
+    }
+
     public function deleteUser(User $user)
     {
         $user->is_active = false;
@@ -58,6 +64,53 @@ class UserRepository implements UserRepositoryInterface
         $user->update($attributes);
         $user->load(["Roles.Permissions"]);
 
+        return $user;
+    }
+
+    
+    public function updateUserProfile(User $user, array $attributes)
+    {
+        $userAttributes = $attributes['user'] ?? [];
+        $user->update($userAttributes);
+    
+        if (isset($attributes['education'])) {
+            foreach ($attributes['education'] as $education) {
+                $user->Educations()->updateOrCreate(
+                    ['id' => $education['id'] ?? null], // Match by ID if it exists
+                    $education
+                );
+            }
+        }
+    
+        if (isset($attributes['experience'])) {
+            foreach ($attributes['experience'] as $experience) {
+                $user->Experiences()->updateOrCreate(
+                    ['id' => $experience['id'] ?? null],
+                    $experience
+                );
+            }
+        }
+    
+        if (isset($attributes['skills'])) {
+            foreach ($attributes['skills'] as $skill) {
+                $user->Skills()->updateOrCreate(
+                    ['id' => $skill['id'] ?? null],
+                    $skill
+                );
+            }
+        }
+    
+        if (isset($attributes['website'])) {
+            foreach ($attributes['website'] as $website) {
+                $user->Websites()->updateOrCreate(
+                    ['id' => $website['id'] ?? null], 
+                    $website
+                );
+            }
+        }
+    
+        $user->load(["Roles.Permissions", "Educations", "Experiences", "Skills", "Websites"]);
+    
         return $user;
     }
 }
