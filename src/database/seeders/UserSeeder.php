@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create a guest user
+        // Create doctor user
         $doctor_user = User::create([
             'name' => 'testDoctor',
             'user_name' => 'test_doctor',
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
             'department_id' => 1,
             'description' => 'test doctor',
             'income_percentage' => 50,
-        ]);
+        ]);        
         
     }
 }

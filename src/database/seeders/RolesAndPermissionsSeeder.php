@@ -18,13 +18,12 @@ class RolesAndPermissionsSeeder extends Seeder
         $adminRole = Role::create(['name' => 'admin']);
         $doctorRole = Role::create(['name' => 'doctor']);
         $receptionistRole = Role::create(['name' => 'receptionist']);
-        $patientRole = Role::create(['name' => 'patient']);
 
         // Define base actions
         $actions = ['view', 'create', 'update', 'delete', 'manage'];
 
         // Define entities
-        $entities = ['user', 'department', 'doctor'];
+        $entities = ['user', 'department', 'doctor', 'patient'];
 
         // Generate permissions
         $permissions = [];
@@ -39,7 +38,6 @@ class RolesAndPermissionsSeeder extends Seeder
         }
         // Assign permissions to roles
         $adminRole->givePermissionTo($permissions);
-
-
+        $doctorRole->givePermissionTo(['view-patient']);
     }
 }

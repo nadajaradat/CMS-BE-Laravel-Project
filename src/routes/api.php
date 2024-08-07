@@ -5,6 +5,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\EducationController;
 use App\Http\Controllers\ExperienceController;
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WebsiteController;
@@ -49,6 +50,16 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/doctor', 'store');
             Route::get('/doctor/{doctor}', 'show');
             Route::put('/doctor/{doctor}', 'update');
+        });
+    });
+
+    Route::middleware(['role:admin,doctor'])->group(function () {
+        // patient management routes
+        Route::controller(PatientController::class)->group(function () {
+            Route::get('/patient', 'index');
+            Route::post('/patient', 'store');
+            Route::get('/patient/{patient}', 'show');
+            Route::put('/patient/{patient}', 'update');
         });
     });
 });
