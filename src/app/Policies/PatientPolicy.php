@@ -82,13 +82,13 @@ class PatientPolicy
         $isAuthorized = false;
 
         if ($user->hasPermissionTo("{$action}-patient")) {
-            $isAuthorized = true;
-        }
-
-        if ($user->hasPermissionTo('manage-patient')) {
-            $isAuthorized &= true;
-        } else {
-            $isAuthorized &= false;
+            if ($patient && $user->hasPermissionTo('manage-patient')) {
+                $isAuthorized = true;
+            } else if ($patient) {
+                $isAuthorized = false;
+            } else {
+                $isAuthorized = true;
+            }
         }
 
         return $isAuthorized
