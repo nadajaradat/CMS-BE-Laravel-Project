@@ -81,15 +81,11 @@ class UserPolicy
         $isAuthorized = false;
 
         if ($user->hasPermissionTo("{$action}-user")) {
-            $isAuthorized = true;
-        }
-
-        if ($model && $user->id === $model->id) {
-            $isAuthorized = true;
-        } elseif ($user->hasPermissionTo('manage-user')) {
-            $isAuthorized = true;
-        } else {
-            $isAuthorized = false;
+            if ($model && $user->id === $model->id) {
+                $isAuthorized = true;
+            } elseif ($user->hasPermissionTo('manage-user')) {
+                $isAuthorized = true;
+            }
         }
 
         return $isAuthorized
