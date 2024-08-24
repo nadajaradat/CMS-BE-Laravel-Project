@@ -2,11 +2,12 @@
 
 namespace App\Policies;
 
+use App\Models\Doctor;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
-class UserPolicy
+class DoctorPolicy
 {
     use HandlesAuthorization;
 
@@ -25,10 +26,10 @@ class UserPolicy
      * Determine whether the user can view the model.
      *
      * @param User $user
-     * @param User $model
+     * @param Doctor $model
      * @return Response
      */
-    public function view(User $user, User $model): Response
+    public function view(User $user, Doctor $model): Response
     {
         return $this->authorize($user, $model, 'view');
     }
@@ -48,10 +49,10 @@ class UserPolicy
      * Determine whether the user can update the model.
      *
      * @param User $user
-     * @param User $model
+     * @param Doctor $model
      * @return Response
      */
-    public function update(User $user, User $model): Response
+    public function update(User $user, Doctor $model): Response
     {
         return $this->authorize($user, $model, 'update');
     }
@@ -60,10 +61,10 @@ class UserPolicy
      * Determine whether the user can delete the model.
      *
      * @param User $user
-     * @param User $model
+     * @param Doctor $model
      * @return Response
      */
-    public function delete(User $user, User $model): Response
+    public function delete(User $user, Doctor $model): Response
     {
         return $this->authorize($user, $model, 'delete');
     }
@@ -72,25 +73,17 @@ class UserPolicy
      * Private method to authorize admin or self.
      *
      * @param User $user
-     * @param User|null $model
+     * @param Doctor|null $model
      * @param string $action
      * @return Response
      */
-    private function authorize(User $user, ?User $model, string $action): Response
+    private function authorize(User $user, ?Doctor $model, string $action): Response
     {
-        $isAuthorized = false;
-
-        if ($user->hasPermissionTo("{$action}-user")) {
-            if ($model && $user->id === $model->id) {
-                $isAuthorized = true;
-            } elseif ($user->hasPermissionTo('manage-user')) {
-                $isAuthorized = true;
-            }
-
-        }
-
+        $isAuthorized = $user->hasPermissionTo("{$action}-doctor") &&
+                        (($model && $user->id === $model->user_id) || $user->hasPermissionTo('manage-doctor'));
+    
         return $isAuthorized
             ? Response::allow()
-            : Response::deny("You do not have permission to {$action} this user.");
+            : Response::deny("You do not have permission to {$action} this doctor.");
     }
 }

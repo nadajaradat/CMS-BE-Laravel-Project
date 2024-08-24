@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Patient;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -18,18 +19,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolesAndPermissionsSeeder::class,
             AdminSeeder::class,
+            DepartmentSeeder::class,
+            UserSeeder::class,
+            PatientSeeder::class,
         ]);
-
-        // Create a guest user
-        $doctor = User::create([
-            'name' => 'testDoctor',
-            'user_name' => 'test_doctor',
-            'contact_information' => '0598563254',
-            'password' => Hash::make('321321'),
-        ]);
-        $doctorRole = Role::where('name', 'doctor')->first();
-        if ($doctorRole) {
-            $doctor->assignRole($doctorRole);
-        }
     }
 }
