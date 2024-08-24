@@ -86,6 +86,7 @@ class UserPolicy
             } elseif ($user->hasPermissionTo('manage-user')) {
                 $isAuthorized = true;
             }
+
         }
 
         return $isAuthorized

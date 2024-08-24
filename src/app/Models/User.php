@@ -59,6 +59,7 @@ class User extends Authenticatable
     }
 
     public function Permissions()
+
     {
         return $this->morphToMany(Permission::class, 'model', 'model_has_permissions', 'model_id', 'permission_id');
     }

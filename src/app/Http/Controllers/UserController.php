@@ -18,6 +18,14 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends CustomController
 {
+    function __construct()
+    {
+        $this->middleware('permission:view-user', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create-user', ['only' => ['store']]);
+        $this->middleware('permission:update-user', ['only' => ['update']]);
+        $this->middleware('permission:delete-user', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -195,6 +203,7 @@ class UserController extends CustomController
         } catch (AuthorizationException $e) {
             return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }
+
 
         DB::beginTransaction();
         try {
