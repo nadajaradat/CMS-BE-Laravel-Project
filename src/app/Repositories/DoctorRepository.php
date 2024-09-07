@@ -30,7 +30,12 @@ class DoctorRepository implements DoctorRepositoryInterface
             ARRAY_FILTER_USE_KEY
         );
 
-        $query = $this->doctor->with(["User", "User.Websites", "Department"])->where($where);
+        $query = $this->doctor->with(["User", "User.Websites", "Department"])
+            ->where($where)
+            ->whereHas('User', function ($query) {
+                $query->where('is_active', 1);
+            });
+
         $cntTotal = $query->count();
         $doctors = $query->orderBy('id', 'desc');
 

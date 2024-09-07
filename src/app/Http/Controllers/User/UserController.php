@@ -188,11 +188,8 @@ class UserController extends CustomController
     {
         try {
             $user = User::findOrfail($userId);
-            $this->authorize('view', $user);
         } catch (ModelNotFoundException $e) {
             return ApiActions::generateResponse(message_key: "User not found", code: ResponseCode::NOT_FOUND);
-        } catch (AuthorizationException $e) {
-            return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }
 
         try {
