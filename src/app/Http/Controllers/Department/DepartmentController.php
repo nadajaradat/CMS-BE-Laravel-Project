@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Department;
 
 use App\Actions\ApiActions;
 use App\Constants\ResponseCode;
+use App\Http\Controllers\CustomController;
 use App\Http\Requests\Department\StoreDepartmentRequest;
 use App\Http\Requests\Department\UpdateDepartmentRequest;
 use App\Http\Resources\DepartmentResource;
-use App\Models\Department;
+use App\Models\Department\Department;
 use App\Repositories\DepartmentRepository;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -20,9 +22,9 @@ class DepartmentController extends CustomController
      */
     public function index(Request $request, DepartmentRepository $department)
     {
-        try{
+        try {
             $this->authorize('viewAny', Department::class);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }
 
@@ -70,17 +72,20 @@ class DepartmentController extends CustomController
     /**
      * Display the specified resource.
      */
-    public function show(Department $department, DepartmentRepository $departmentRepository)
+    public function show($departmentId, DepartmentRepository $departmentRepository)
     {
         try {
+            $department = Department::findOrfail($departmentId);
             $this->authorize('view', $department);
+        } catch (ModelNotFoundException $e) {
+            return ApiActions::generateResponse(message_key: "Department not found", code: ResponseCode::NOT_FOUND);
         } catch (\Exception $e) {
             return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }
 
-        try{
+        try {
             $department = $departmentRepository->getDepartmentById($department);
-            if(!$department){
+            if (!$department) {
                 return ApiActions::generateResponse(message_key: "Department not found", code: ResponseCode::NOT_FOUND);
             }
 
@@ -88,7 +93,7 @@ class DepartmentController extends CustomController
 
             $this->data["department"] = $department;
             return ApiActions::generateResponse(DepartmentResource::make($this->data), message_key: "Department found successfully");
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             return ApiActions::generateResponse(message_key: "An error occurred", code: ResponseCode::INTERNAL_ERROR);
         }
@@ -97,10 +102,13 @@ class DepartmentController extends CustomController
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateDepartmentRequest $request, Department $department, DepartmentRepository $departmentRepository)
+    public function update(UpdateDepartmentRequest $request, $departmentId, DepartmentRepository $departmentRepository)
     {
         try {
+            $department = Department::findOrFail($departmentId);
             $this->authorize('update', $department);
+        } catch (ModelNotFoundException $e) {
+            return ApiActions::generateResponse(message_key: "Department not found", code: ResponseCode::NOT_FOUND);
         } catch (\Exception $e) {
             return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }
@@ -125,10 +133,13 @@ class DepartmentController extends CustomController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Department $department, DepartmentRepository $departmentRepository)
+    public function destroy($departmentId, DepartmentRepository $departmentRepository)
     {
         try {
+            $department = Department::findOrFail($departmentId);
             $this->authorize('delete', $department);
+        } catch (ModelNotFoundException $e) {
+            return ApiActions::generateResponse(message_key: "Department not found", code: ResponseCode::NOT_FOUND);
         } catch (\Exception $e) {
             return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }

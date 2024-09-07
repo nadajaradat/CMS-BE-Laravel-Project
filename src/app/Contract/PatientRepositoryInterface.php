@@ -2,8 +2,7 @@
 
 namespace App\Contract;
 
-use App\Models;
-use App\Models\Patient;
+use App\Models\Patient\Patient;
 
 interface PatientRepositoryInterface
 {

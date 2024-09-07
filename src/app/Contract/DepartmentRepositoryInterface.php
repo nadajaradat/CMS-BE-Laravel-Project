@@ -2,7 +2,7 @@
 
 namespace App\Contract;
 
-use App\Models\Department;
+use App\Models\Department\Department;
 
 interface DepartmentRepositoryInterface 
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
 use App\Actions\ApiActions;
 use App\Constants\ResponseCode;
@@ -14,6 +14,7 @@ use App\Repositories\UserRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends CustomController
@@ -86,10 +87,13 @@ class UserController extends CustomController
     /**
      * Display the specified resource.
      */
-    public function show(User $user, UserRepository $userRepo)
+    public function show($userId, UserRepository $userRepo)
     {
         try {
+            $user = User::findOrfail($userId);
             $this->authorize('view', $user);
+        } catch (ModelNotFoundException $e) {
+            return ApiActions::generateResponse(message_key: "User not found", code: ResponseCode::NOT_FOUND);
         } catch (AuthorizationException $e) {
             return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }
@@ -114,10 +118,13 @@ class UserController extends CustomController
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, User $user, UserRepository $userRepo)
+    public function update(UpdateUserRequest $request, $userId, UserRepository $userRepo)
     {
         try {
+            $user = User::findOrFail($userId);
             $this->authorize('update', $user);
+        } catch (ModelNotFoundException $e) {
+            return ApiActions::generateResponse(message_key: "User not found", code: ResponseCode::NOT_FOUND);
         } catch (AuthorizationException $e) {
             return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }
@@ -133,7 +140,7 @@ class UserController extends CustomController
             $updated = $obj->isCreated();
             if (!$updated) {
                 DB::rollBack();
-                return ApiActions::generateResponse(message_key: "An error when edit folder", code: ResponseCode::INTERNAL_ERROR);
+                return ApiActions::generateResponse(message_key: "An error when edit user", code: ResponseCode::INTERNAL_ERROR);
             }
             DB::commit();
             $this->data["user"] = $userRepo->getUserById($user);
@@ -147,10 +154,13 @@ class UserController extends CustomController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user, UserRepository $userRepo)
+    public function destroy($userId, UserRepository $userRepo)
     {
         try {
+            $user = User::findOrFail($userId);
             $this->authorize('delete', $user);
+        } catch (ModelNotFoundException $e) {
+            return ApiActions::generateResponse(message_key: "User not found", code: ResponseCode::NOT_FOUND);
         } catch (AuthorizationException $e) {
             return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }
@@ -174,8 +184,17 @@ class UserController extends CustomController
     /**
      * Display a listing of the resource.
      */
-    public function indexProfile(User $user, UserRepository $userRepo)
+    public function indexProfile($userId, UserRepository $userRepo)
     {
+        try {
+            $user = User::findOrfail($userId);
+            $this->authorize('view', $user);
+        } catch (ModelNotFoundException $e) {
+            return ApiActions::generateResponse(message_key: "User not found", code: ResponseCode::NOT_FOUND);
+        } catch (AuthorizationException $e) {
+            return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
+        }
+
         try {
             $user = $userRepo->getUserProfile($user);
 
@@ -196,10 +215,13 @@ class UserController extends CustomController
     /**
      * Update the specified resource in storage.
      */
-    public function updateProfile(UpdateUserProfileRequest $request, User $user, UserRepository $userRepo)
+    public function updateProfile(UpdateUserProfileRequest $request, $userId, UserRepository $userRepo)
     {
         try {
+            $user = User::findOrFail($userId);
             $this->authorize('update', $user);
+        } catch (ModelNotFoundException $e) {
+            return ApiActions::generateResponse(message_key: "User not found", code: ResponseCode::NOT_FOUND);
         } catch (AuthorizationException $e) {
             return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }
@@ -216,7 +238,7 @@ class UserController extends CustomController
             $updated = $obj->isCreated();
             if (!$updated) {
                 DB::rollBack();
-                return ApiActions::generateResponse(message_key: "An error when edit folder", code: ResponseCode::INTERNAL_ERROR);
+                return ApiActions::generateResponse(message_key: "An error when edit profile", code: ResponseCode::INTERNAL_ERROR);
             }
             DB::commit();
             $this->data["user"] = $userRepo->getUserProfile($user);

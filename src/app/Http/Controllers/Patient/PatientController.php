@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Patient;
 
 use App\Actions\ApiActions;
 use App\Constants\ResponseCode;
@@ -9,11 +9,12 @@ use App\Http\Requests\Patient\StorePatientRequest;
 use App\Http\Requests\Patient\UpdatePatientProfileRequest;
 use App\Http\Requests\Patient\UpdatePatientRequest;
 use App\Http\Resources\PatientResource;
-use App\Models\Patient;
+use App\Models\Patient\Patient;
 use App\Repositories\PatientRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 class PatientController extends CustomController
@@ -78,10 +79,13 @@ class PatientController extends CustomController
     /**
      * Display the specified resource.
      */
-    public function show(Patient $patient, PatientRepository $patientRepo)
+    public function show($patientId, PatientRepository $patientRepo)
     {
         try {
+            $patient = Patient::findOrfail($patientId);
             $this->authorize('view', $patient);
+        } catch (ModelNotFoundException $e) {
+            return ApiActions::generateResponse(message_key: "Patient not found", code: ResponseCode::NOT_FOUND);
         } catch (AuthorizationException $e) {
             return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }
@@ -106,10 +110,13 @@ class PatientController extends CustomController
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePatientRequest $request, Patient $patient, PatientRepository $patientRepo)
+    public function update(UpdatePatientRequest $request, $patientId, PatientRepository $patientRepo)
     {
         try {
+            $patient = Patient::findOrFail($patientId);
             $this->authorize('update', $patient);
+        } catch (ModelNotFoundException $e) {
+            return ApiActions::generateResponse(message_key: "Patient not found", code: ResponseCode::NOT_FOUND);
         } catch (AuthorizationException $e) {
             return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }
@@ -135,5 +142,4 @@ class PatientController extends CustomController
             return ApiActions::generateResponse(['e' => $e->getMessage()], message_key: "An error occurred", code: ResponseCode::INTERNAL_ERROR);
         }
     }
-
 }

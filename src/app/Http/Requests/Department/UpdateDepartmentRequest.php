@@ -22,7 +22,6 @@ class UpdateDepartmentRequest extends CustomFormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|integer|exists:departments,id',
             'name' => 'string|max:255|unique:departments',
             'description' => 'string|max:255',
             'is_active' => 'boolean',

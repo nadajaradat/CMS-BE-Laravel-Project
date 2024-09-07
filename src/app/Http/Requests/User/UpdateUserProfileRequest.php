@@ -54,7 +54,7 @@ class UpdateUserProfileRequest extends CustomFormRequest
 
             'user' => 'array',
             'user.name' => 'string|max:255',
-            'user.user_name' => 'string|max:255|unique:users',
+            'user.user_name' => 'string|max:255|unique:users,user_name',
             'user.contact_information' => 'string|max:255',
             'user.password' => 'string|min:8'
 

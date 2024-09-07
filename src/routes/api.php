@@ -1,16 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\DoctorController;
-use App\Http\Controllers\EducationController;
-use App\Http\Controllers\ExperienceController;
-use App\Http\Controllers\PatientController;
-use App\Http\Controllers\SkillController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\WebsiteController;
-use App\Models\Website;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Department\DepartmentController;
+use App\Http\Controllers\Doctor\DoctorController;
+use App\Http\Controllers\Patient\PatientController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes

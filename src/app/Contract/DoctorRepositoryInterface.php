@@ -2,7 +2,7 @@
 
 namespace App\Contract;
 
-use App\Models\Doctor;
+use App\Models\Doctor\Doctor;
 
 interface DoctorRepositoryInterface 
 {

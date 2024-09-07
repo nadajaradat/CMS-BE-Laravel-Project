@@ -4,7 +4,7 @@ namespace App\Contract;
 
 use App\Models\User;
 
-interface UserRepositoryInterface 
+interface UserRepositoryInterface
 {
     public function getAllUsers($where = [], $start = 0, $length = 10, &$cntTotal);
     public function getUserById(User $user);

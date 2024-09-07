@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
+use App\Models\Department\Department;
+use App\Models\Doctor\Doctor;
 use App\Models\User;
-use App\Models\Department;
-use App\Models\Doctor;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 

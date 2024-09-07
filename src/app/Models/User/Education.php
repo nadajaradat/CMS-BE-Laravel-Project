@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\User;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,6 +10,7 @@ class Education extends Model
 {
     use HasFactory;
 
+    protected $table = 'education';
     /**
      * The attributes that are mass assignable.
      *
@@ -22,6 +24,9 @@ class Education extends Model
         'end_date',
         'description',
     ];
+
+    protected $hidden = ['created_at', 'updated_at'];
+
 
     /**
      * Get the user that owns the education.

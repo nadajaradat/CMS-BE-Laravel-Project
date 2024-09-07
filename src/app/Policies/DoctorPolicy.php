@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Doctor;
+use App\Models\Doctor\Doctor;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
@@ -80,8 +80,8 @@ class DoctorPolicy
     private function authorize(User $user, ?Doctor $model, string $action): Response
     {
         $isAuthorized = $user->hasPermissionTo("{$action}-doctor") &&
-                        (($model && $user->id === $model->user_id) || $user->hasPermissionTo('manage-doctor'));
-    
+            (($model && $user->id === $model->user_id) || $user->hasPermissionTo('manage-doctor'));
+
         return $isAuthorized
             ? Response::allow()
             : Response::deny("You do not have permission to {$action} this doctor.");

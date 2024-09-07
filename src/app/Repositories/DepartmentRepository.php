@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Contract\DepartmentRepositoryInterface;
-use App\Models\Department;
+use App\Models\Department\Department;
 
 /**
  * Class DepartmentRepository

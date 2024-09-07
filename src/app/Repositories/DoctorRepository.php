@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Contract\DoctorRepositoryInterface;
-use App\Models\Doctor;
+use App\Models\Doctor\Doctor;
 
 /**
  * Class DoctorRepository
@@ -39,7 +39,7 @@ class DoctorRepository implements DoctorRepositoryInterface
 
     public function getDoctorById(Doctor $doctor)
     {
-        $doctor->load('User', 'Department');
+        $doctor->load('User', "User.Websites", 'Department');
         return $doctor;
     }
 
@@ -53,6 +53,6 @@ class DoctorRepository implements DoctorRepositoryInterface
     public function updateDoctor(Doctor $doctor, array $attributes)
     {
         $doctor->update($attributes);
-        return $doctor;
+        return $this->getDoctorById($doctor);
     }
 }

@@ -68,12 +68,12 @@ class UserRepository implements UserRepositoryInterface
         return $user;
     }
 
-    
+
     public function updateUserProfile(User $user, array $attributes)
     {
         $userAttributes = $attributes['user'] ?? [];
         $user->update($userAttributes);
-    
+
         if (isset($attributes['education'])) {
             foreach ($attributes['education'] as $education) {
                 $user->Educations()->updateOrCreate(
@@ -82,7 +82,7 @@ class UserRepository implements UserRepositoryInterface
                 );
             }
         }
-    
+
         if (isset($attributes['experience'])) {
             foreach ($attributes['experience'] as $experience) {
                 $user->Experiences()->updateOrCreate(
@@ -91,7 +91,7 @@ class UserRepository implements UserRepositoryInterface
                 );
             }
         }
-    
+
         if (isset($attributes['skills'])) {
             foreach ($attributes['skills'] as $skill) {
                 $user->Skills()->updateOrCreate(
@@ -100,21 +100,20 @@ class UserRepository implements UserRepositoryInterface
                 );
             }
         }
-    
+
         if (isset($attributes['website'])) {
             foreach ($attributes['website'] as $website) {
                 $user->Websites()->updateOrCreate(
-                    ['id' => $website['id'] ?? null], 
+                    ['id' => $website['id'] ?? null],
                     $website
                 );
             }
         }
-    
+
         $user->load(["Roles.Permissions", "Educations", "Experiences", "Skills", "Websites"]);
-    
+
         return $user;
     }
-
     public function assignRole(User $user, string $role_name)
     {
         $role = Role::where('name', $role_name)->first();

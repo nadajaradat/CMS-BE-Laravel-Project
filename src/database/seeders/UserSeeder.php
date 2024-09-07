@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Doctor;
+use App\Models\Doctor\Doctor;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -32,7 +31,6 @@ class UserSeeder extends Seeder
             'department_id' => 1,
             'description' => 'test doctor',
             'income_percentage' => 50,
-        ]);        
-        
+        ]);
     }
 }

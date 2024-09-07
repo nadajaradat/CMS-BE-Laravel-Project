@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Contract\PatientRepositoryInterface;
-use App\Models\Patient;
+use App\Models\Patient\Patient;
 
 /**
  * Class PatientRepository

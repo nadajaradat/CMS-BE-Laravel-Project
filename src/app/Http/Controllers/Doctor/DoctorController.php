@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Doctor;
 
 use App\Actions\ApiActions;
 use App\Constants\ResponseCode;
 use App\Http\Controllers\CustomController;
 use App\Http\Requests\Doctor\StoreDoctorRequest;
-use App\Http\Requests\Doctor\UpdateDoctorProfileRequest;
 use App\Http\Requests\Doctor\UpdateDoctorRequest;
 use App\Http\Resources\DoctorResource;
-use App\Models\Doctor;
+use App\Models\Doctor\Doctor;
 use App\Repositories\DoctorRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 class DoctorController extends CustomController
@@ -97,10 +97,13 @@ class DoctorController extends CustomController
     /**
      * Display the specified resource.
      */
-    public function show(Doctor $doctor, DoctorRepository $doctorRepo)
+    public function show($doctorId, DoctorRepository $doctorRepo)
     {
         try {
+            $doctor = Doctor::findOrFail($doctorId);
             $this->authorize('view', $doctor);
+        } catch (ModelNotFoundException $e) {
+            return ApiActions::generateResponse(message_key: "Doctor not found", code: ResponseCode::NOT_FOUND);
         } catch (AuthorizationException $e) {
             return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }
@@ -126,10 +129,13 @@ class DoctorController extends CustomController
      * Update the specified resource in storage.
      */
 
-    public function update(UpdateDoctorRequest $request, Doctor $doctor, DoctorRepository $doctorRepo, UserRepository $userRepo)
+    public function update(UpdateDoctorRequest $request, $doctorId, DoctorRepository $doctorRepo, UserRepository $userRepo)
     {
         try {
+            $doctor = Doctor::findOrFail($doctorId);
             $this->authorize('update', $doctor);
+        } catch (ModelNotFoundException $e) {
+            return ApiActions::generateResponse(message_key: "Doctor not found", code: ResponseCode::NOT_FOUND);
         } catch (AuthorizationException $e) {
             return ApiActions::generateResponse(message_key: "Unauthorized", code: ResponseCode::UNAUTHORIZED);
         }
