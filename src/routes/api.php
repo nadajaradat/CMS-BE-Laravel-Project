@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Department\DepartmentController;
 use App\Http\Controllers\Doctor\DoctorController;
 use App\Http\Controllers\Patient\PatientController;
+use App\Http\Controllers\Receptionist\ReceptionistController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,13 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/doctor', 'store');
             Route::get('/doctor/{doctor}', 'show');
             Route::put('/doctor/{doctor}', 'update');
+        });
+
+        Route::controller(ReceptionistController::class)->group(function () {
+            Route::get('/receptionist', 'index');
+            Route::post('/receptionist', 'store');
+            Route::get('/receptionist/{receptionist}', 'show');
+            Route::put('/receptionist/{receptionist}', 'update');
         });
     });
 

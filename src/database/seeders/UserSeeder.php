@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Doctor\Doctor;
+use App\Models\Receptionist\Receptionist;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -31,6 +32,21 @@ class UserSeeder extends Seeder
             'department_id' => 1,
             'description' => 'test doctor',
             'income_percentage' => 50,
+        ]);
+
+        // Create receptionist user
+        $receptionist_user = User::create([
+            'name' => 'testReceptionist',
+            'user_name' => 'test_receptionist',
+            'contact_information' => '0598563254',
+            'password' => Hash::make('321321'),
+        ]);
+        $receptionistRole = Role::where('name', 'receptionist')->first();
+        if ($receptionistRole) {
+            $receptionist_user->assignRole($receptionistRole);
+        }
+        $receptionist = Receptionist::create([
+            'user_id' => $receptionist_user->id,
         ]);
     }
 }
