@@ -71,43 +71,81 @@ class UserRepository implements UserRepositoryInterface
 
     public function updateUserProfile(User $user, array $attributes)
     {
-        $userAttributes = $attributes['user'] ?? [];
+        $userAttributes = array_filter($attributes, function ($key) {
+            return !in_array($key, ['educations', 'experiences', 'skills', 'websites']);
+        }, ARRAY_FILTER_USE_KEY);
         $user->update($userAttributes);
 
-        if (isset($attributes['education'])) {
-            foreach ($attributes['education'] as $education) {
-                $user->Educations()->updateOrCreate(
-                    ['id' => $education['id'] ?? null], // Match by ID if it exists
+        // Handle educations
+        if (isset($attributes['educations'])) {
+            $existingEducationIds = $user->Educations->pluck('id')->toArray();
+            $updatedEducationIds = [];
+
+            foreach ($attributes['educations'] as $education) {
+                $updatedEducation = $user->Educations()->updateOrCreate(
+                    ['id' => $education['id'] ?? null],
                     $education
                 );
+                $updatedEducationIds[] = $updatedEducation->id;
             }
+
+            // Delete educations that are not in the updated list
+            $educationsToDelete = array_diff($existingEducationIds, $updatedEducationIds);
+            $user->Educations()->whereIn('id', $educationsToDelete)->delete();
         }
 
-        if (isset($attributes['experience'])) {
-            foreach ($attributes['experience'] as $experience) {
-                $user->Experiences()->updateOrCreate(
+        // Handle experiences
+        if (isset($attributes['experiences'])) {
+            $existingExperienceIds = $user->Experiences->pluck('id')->toArray();
+            $updatedExperienceIds = [];
+
+            foreach ($attributes['experiences'] as $experience) {
+                $updatedExperience = $user->Experiences()->updateOrCreate(
                     ['id' => $experience['id'] ?? null],
                     $experience
                 );
+                $updatedExperienceIds[] = $updatedExperience->id;
             }
+
+            // Delete experiences that are not in the updated list
+            $experiencesToDelete = array_diff($existingExperienceIds, $updatedExperienceIds);
+            $user->Experiences()->whereIn('id', $experiencesToDelete)->delete();
         }
 
+        // Handle skills
         if (isset($attributes['skills'])) {
+            $existingSkillIds = $user->Skills->pluck('id')->toArray();
+            $updatedSkillIds = [];
+
             foreach ($attributes['skills'] as $skill) {
-                $user->Skills()->updateOrCreate(
+                $updatedSkill = $user->Skills()->updateOrCreate(
                     ['id' => $skill['id'] ?? null],
                     $skill
                 );
+                $updatedSkillIds[] = $updatedSkill->id;
             }
+
+            // Delete skills that are not in the updated list
+            $skillsToDelete = array_diff($existingSkillIds, $updatedSkillIds);
+            $user->Skills()->whereIn('id', $skillsToDelete)->delete();
         }
 
-        if (isset($attributes['website'])) {
-            foreach ($attributes['website'] as $website) {
-                $user->Websites()->updateOrCreate(
+        // Handle websites
+        if (isset($attributes['websites'])) {
+            $existingWebsiteIds = $user->Websites->pluck('id')->toArray();
+            $updatedWebsiteIds = [];
+
+            foreach ($attributes['websites'] as $website) {
+                $updatedWebsite = $user->Websites()->updateOrCreate(
                     ['id' => $website['id'] ?? null],
                     $website
                 );
+                $updatedWebsiteIds[] = $updatedWebsite->id;
             }
+
+            // Delete websites that are not in the updated list
+            $websitesToDelete = array_diff($existingWebsiteIds, $updatedWebsiteIds);
+            $user->Websites()->whereIn('id', $websitesToDelete)->delete();
         }
 
         $user->load(["Roles.Permissions", "Educations", "Experiences", "Skills", "Websites"]);
